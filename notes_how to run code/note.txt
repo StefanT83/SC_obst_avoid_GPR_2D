@@ -1,0 +1,29 @@
+////////////////////////////////////////////////////////////////////////
+// // TEST code on SuperDroid HD2 + Velodyne VLP16
+Step1) [nvidia@192.168.5.160] $roslaunch sdr_launch run_uom_stefan.launch
+Note: file location ~/58985_race_hd2/catkin_ws/src/sdr_launch/*
+
+Step2) [nvidia@192.168.5.160] $roslaunch velodyne_pointcloud VLP16_points.launch  (by default, approximately min_range:=0.4)
+Note: file location ~/uom_stefan_ws/src/velodyne/velodyne_pointcloud
+
+Step3) [laptop] $rosrun joy joy_node /joy:=/joy_raw  _dev:="/dev/input/js2" 
+
+Step4) [nvidia@192.168.5.160] $rosrun shared_control_velodyne_pkg shared_control_velodyne_node /joy_out:=/joy
+
+
+////////////////////////////////////////////////////////////////////////
+// // TEST code on Agilex Scout Mini R&D Pro + Intel Realsense D435
+// Step1. start Agilex base
+[Nvidia-Xavier] $ sudo ip link set can0 up type can bitrate 500000
+[Nvidia-Xavier] $ roslaunch scout_bringup scout_mini_robot_base.launch
+
+// Step2. start realsense
+[Nvidia-Xavier] $ roslaunch realsense2_camera rs_camera.launch (filters:=pointcloud   <- will add a pointcloud topic that we can visualize $rostopic echo /camera/depth/color/points)
+
+// Step3. start joypad
+[laptop] $rosrun joy joy_node /joy:=/joy_raw  _dev:="/dev/input/js2" (_autorepeat_rate:="10.0")
+
+// Step4. start shared control
+[Nvidia-Xavier] $ rosrun shared_control_realsense_pkshared_control_realsense_node
+
+////////////////////////////////////////////////////////////////////////
